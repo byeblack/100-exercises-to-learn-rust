@@ -1,12 +1,12 @@
-mod ticket {
-    struct Ticket {
-        title: String,
-        description: String,
-        status: String,
+pub mod ticket {
+    pub struct Ticket {
+        pub title: String,
+        pub description: String,
+        pub status: String,
     }
 
     impl Ticket {
-        fn new(title: String, description: String, status: String) -> Ticket {
+        pub fn new(title: String, description: String, status: String) -> Ticket {
             if title.is_empty() {
                 panic!("Title cannot be empty");
             }
@@ -43,6 +43,7 @@ mod tests {
     // Be careful though! We don't want this function to compile after you have changed
     // visibility to make the use statement compile!
     // Once you have verified that it indeed doesn't compile, comment it out.
+    #[test]
     fn should_not_be_possible() {
         let ticket = Ticket::new("A title".into(), "A description".into(), "To-Do".into());
 
@@ -58,6 +59,7 @@ mod tests {
         assert_eq!(ticket.description, "A description");
     }
 
+    #[test]
     fn encapsulation_cannot_be_violated() {
         // This should be impossible as well, with a similar error as the one encountered above.
         // (It will throw a compilation error only after you have commented the faulty line

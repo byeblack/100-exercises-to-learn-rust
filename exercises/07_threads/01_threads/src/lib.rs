@@ -15,7 +15,37 @@
 use std::thread;
 
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+    thread::scope(|s| {
+        if v.is_empty() {
+            return 0;
+        }
+        if v.len() == 1 {
+            return v[0];
+        }
+        if v.len() == 2 {
+            return v[0] + v[1];
+        }
+
+        let (one_slice, two_slice) = v.split_at(v.len() / 2);
+
+        let one_handle = s.spawn(move || {
+            let mut num = 0;
+            for i in one_slice {
+                num += i;
+            }
+            num
+        });
+
+        let two_handle = s.spawn(move || {
+            let mut num = 0;
+            for i in two_slice {
+                num += i;
+            }
+            num
+        });
+
+        one_handle.join().unwrap() + two_handle.join().unwrap()
+    })
 }
 
 #[cfg(test)]

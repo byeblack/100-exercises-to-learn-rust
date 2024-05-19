@@ -4,8 +4,55 @@ use tokio::net::TcpListener;
 //  Multiple connections (on the same listeners) should be processed concurrently.
 //  The received data should be echoed back to the client.
 pub async fn echoes(first: TcpListener, second: TcpListener) -> Result<(), anyhow::Error> {
-    todo!()
+    loop {
+        tokio::select! {
+            Ok((mut tcp, _)) = first.accept() => {
+
+                tokio::spawn(async move {
+                    let (mut reader, mut writer) = tcp.split();
+                    tokio::io::copy(&mut reader, &mut writer).await.unwrap();
+                });
+            }
+            Ok((mut tcp, _)) = second.accept() => {
+
+                tokio::spawn(async move {
+                    let (mut reader, mut writer) = tcp.split();
+                    tokio::io::copy(&mut reader, &mut writer).await.unwrap();
+                });
+            }
+            else => break
+        }
+    }
+
+    Ok(())
 }
+
+// pub async fn echoes(first: TcpListener, second: TcpListener) -> Result<(), anyhow::Error> {
+//     let f = tokio::spawn(async move {
+//         loop {
+//             let (mut tcp, _) = first.accept().await?;
+//             let (mut reader, mut writer) = tcp.split();
+//             tokio::io::copy(&mut reader, &mut writer).await?;
+//         }
+
+//         Ok::<_, anyhow::Error>(())
+//     });
+
+//     let s = tokio::spawn(async move {
+//         loop {
+//             let (mut tcp, _) = second.accept().await?;
+//             let (mut reader, mut writer) = tcp.split();
+//             tokio::io::copy(&mut reader, &mut writer).await?;
+//         }
+
+//         Ok::<_, anyhow::Error>(())
+//     });
+
+//     let _ = f.await?;
+//     let _ = s.await?;
+
+//     Ok(())
+// }
 
 #[cfg(test)]
 mod tests {

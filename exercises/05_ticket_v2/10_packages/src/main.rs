@@ -4,6 +4,7 @@
 //   The library target should expose a public function named `hello_world` that takes no arguments
 //   and returns nothing.
 use packages::hello_world;
+mod packages;
 
 // This is the entrypoint of the binary.
 fn main() {
